@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>io.github.htr3n</groupId>
+  <artifactId>depth-chart</artifactId>
+  <version>0.0.1</version>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>21</maven.compiler.release>
+    <maven.min.version>3.9.0</maven.min.version>
+    <version.org.lombok>1.18.34</version.org.lombok>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${version.org.lombok}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.15.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.13</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>3.26.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.5.6</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.datafaker</groupId>
+      <artifactId>datafaker</artifactId>
+      <version>2.2.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- ================================================= -->
+      <!-- JUnit 5 https://junit.org/junit5/
+          Import managed dependencies from JUnit 5 BOM  -->
+      <!-- ================================================= -->
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.10.3</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-enforcer-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.4.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.3.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.13.0</version>
+          <configuration>
+            <release>${maven.compiler.release}</release>
+            <encoding>${project.build.sourceEncoding}</encoding>
+            <annotationProcessorPaths>
+              <path>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${version.org.lombok}</version>
+              </path>
+            </annotationProcessorPaths>
+            <showWarnings>true</showWarnings>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.3.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.4.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>3.1.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>3.1.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.12.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>3.6.2</version>
+        </plugin>
+        <!--
+        https://maven.apache.org/enforcer/maven-enforcer-plugin/
+        The Enforcer plugin provides goals to control certain environmental
+        constraints such as Maven version, JDK version and OS family along
+        with many more built-in rules and user created rules.
+        -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>3.5.0</version>
+          <executions>
+            <execution>
+              <id>enforce-maven</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <!-- Built-in Rules -->
+                  <banDependencyManagementScope>
+                    <message>Best practice is to not define scope in dependencyManagement but dependencies section!
+                    </message>
+                  </banDependencyManagementScope>
+                  <banDistributionManagement>
+                    <message>A module must not have the distributionManagement section!</message>
+                  </banDistributionManagement>
+                  <requireNoRepositories>
+                    <message>Best Practice is to never define repositories in pom.xml (use a repository manager instead)
+                    </message>
+                  </requireNoRepositories>
+                  <requireMavenVersion>
+                    <version>[${maven.min.version}, )</version>
+                    <message>[ERROR] The supported version of Maven is ${maven.min.version} or higher
+                    </message>
+                  </requireMavenVersion>
+                  <requireJavaVersion>
+                    <version>${maven.compiler.release}</version>
+                    <message>[ERROR] The supported version of Java is ${maven.compiler.release}</message>
+                  </requireJavaVersion>
+                  <requirePluginVersions>
+                    <message>Best practice is to always define plugin versions!</message>
+                  </requirePluginVersions>
+                  <banCircularDependencies/>
+                  <banDuplicateClasses/>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+          <!--
+              MojoHaus - For extra enforcer rules
+              https://www.mojohaus.org/extra-enforcer-rules/
+          -->
+          <dependencies>
+            <dependency>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>extra-enforcer-rules</artifactId>
+              <version>1.8.0</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <!--
+         Versions Maven Plugin
+          https://www.mojohaus.org/versions-maven-plugin/
+         -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.17.1</version>
+          <configuration>
+            <ruleSet>
+              <ignoreVersion>
+                <type>regex</type>
+                <version>.*[-_\.](alpha|Alpha|ALPHA|b|beta|Beta|BETA|rc|RC|CR|M|EA|AM)[-_\.]?\d*</version>
+              </ignoreVersion>
+            </ruleSet>
+          </configuration>
+        </plugin>
+        <!-- Spotless: Code Formatting Plugin
+        https://github.com/diffplug/spotless/tree/main/plugin-maven
+        https://mvnrepository.com/artifact/com.diffplug.spotless/spotless-maven-plugin
+        -->
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>2.43.0</version>
+          <executions>
+            <execution>
+              <id>code-format-apply</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>apply</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>code-format-check</id>
+              <phase>compile</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <!-- https://github.com/diffplug/spotless/tree/main/plugin-maven#java -->
+            <java>
+              <includes>
+                <include>src/main/java/**/*.java</include>
+                <include>src/test/java/**/*.java</include>
+              </includes>
+              <!-- apply google-java-format -->
+              <googleJavaFormat>
+                <version>1.18.1</version>
+                <style>GOOGLE</style>
+              </googleJavaFormat>
+              <formatAnnotations/>
+              <removeUnusedImports/>
+            </java>
+            <!-- https://github.com/diffplug/spotless/tree/main/plugin-maven#maven-pom -->
+            <pom>
+              <includes>
+                <include>pom.xml</include>
+              </includes>
+            </pom>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
